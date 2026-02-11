@@ -1,0 +1,1507 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAI U Events</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Space Grotesk', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes welcomeSlideIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes welcomeFade {
+      0% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .welcome-splash {
+      animation: welcomeSlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .welcome-splash-fade {
+      animation: welcomeFade 3.5s ease-in-out forwards;
+    }
+
+    .welcome-text {
+      animation: fadeUp 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .welcome-text:nth-child(1) {
+      animation-delay: 0.3s;
+    }
+
+    .welcome-text:nth-child(2) {
+      animation-delay: 0.6s;
+    }
+
+    .welcome-text:nth-child(3) {
+      animation-delay: 0.9s;
+    }
+    
+    .animate-fade-up {
+      animation: fadeUp 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    
+    .animate-fade-up-delay {
+      animation: fadeUp 0.5s ease-out 0.1s forwards;
+      opacity: 0;
+    }
+    
+    .login-input {
+      background-color: #f8fafc;
+      border-color: #e2e8f0;
+      color: #1e293b;
+      transition: all 0.3s ease;
+    }
+
+    .login-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      outline: none;
+    }
+
+    .login-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .error-message {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+      display: none;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .success-message {
+      background-color: rgba(34, 197, 94, 0.1);
+      color: #059669;
+      display: none;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .login-container {
+      animation: fadeUp 0.6s ease-out;
+    }
+
+    .event-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .event-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
+    }
+
+    .category-pill {
+      transition: all 0.2s ease;
+    }
+    
+    .category-pill:hover {
+      transform: translateY(-1px);
+    }
+    
+    .category-pill.active {
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .back-button {
+      transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+      background-color: #f1f5f9;
+    }
+
+    .back-button:active {
+      transform: scale(0.95);
+    }
+
+    .dashboard-stat {
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-stat:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.1);
+    }
+
+    .registered-event-item {
+      transition: all 0.3s ease;
+    }
+
+    .registered-event-item:hover {
+      background-color: #f0f9ff;
+    }
+
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .slide-in-right {
+      animation: slideInRight 0.3s ease-out forwards;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .slide-out-right {
+      animation: slideOutRight 0.3s ease-out forwards;
+    }
+
+    @keyframes slideOutRight {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full font-body" style="background-color: #ffffff; color: #1e293b;">
+  <div id="app" class="h-full overflow-auto"><!-- Welcome Splash Screen -->
+   <div id="splash-screen" class="fixed inset-0 z-50 flex items-center justify-center" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+    <div class="text-center welcome-splash-fade">
+     <div class="relative mb-8">
+      <div class="absolute -left-32 -top-32 h-64 w-64 rounded-full opacity-20 blur-3xl" style="background-color: #ffffff;"></div>
+      <div class="absolute -bottom-32 -right-32 h-64 w-64 rounded-full opacity-10 blur-3xl" style="background-color: #ffffff;"></div>
+      <div class="relative welcome-splash flex h-24 w-24 items-center justify-center rounded-2xl mx-auto mb-6" style="background-color: #ffffff; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);">
+       <svg class="h-16 w-16" style="color: #3b82f6;" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+       </svg>
+      </div>
+      <div class="welcome-text font-display text-5xl font-bold tracking-tight" style="letter-spacing: -0.02em; color: #ffffff;">
+       Welcome to
+      </div>
+      <div class="welcome-text font-display text-6xl font-black" style="letter-spacing: -0.02em; color: #ffffff;">
+       SAI U Events
+      </div>
+      <div class="welcome-text text-lg" style="color: rgba(255, 255, 255, 0.9);">
+       Discover amazing campus experiences
+      </div>
+     </div>
+    </div>
+   </div><!-- Welcome Page (Choose Login or Register) -->
+   <div id="welcome-page" class="min-h-screen flex items-center justify-center px-4">
+    <div class="login-container w-full max-w-md">
+     <div class="absolute -left-48 -top-48 h-96 w-96 rounded-full opacity-10 blur-3xl" style="background-color: #3b82f6;"></div>
+     <div class="absolute -bottom-48 -right-48 h-96 w-96 rounded-full opacity-5 blur-3xl" style="background-color: #3b82f6;"></div>
+     <div class="relative rounded-2xl border p-8 backdrop-blur-xl" style="background-color: #ffffff; border-color: #e0e7ff;">
+      <div class="mb-8">
+       <div class="flex h-16 w-16 items-center justify-center rounded-lg mx-auto mb-4 flex-shrink-0" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
+        <svg class="h-9 w-9 text-white" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+        </svg>
+       </div>
+       <h1 class="font-display text-3xl font-bold mb-2 text-center">Welcome to SAI U</h1>
+       <p class="text-sm text-center" style="color: #64748b;">Discover amazing campus events and connect with your community</p>
+      </div>
+      <div class="space-y-3"><button id="goto-login-btn" class="w-full rounded-lg py-3 text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-95" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"> Sign In </button> <button id="goto-register-btn" class="w-full rounded-lg py-3 text-sm font-semibold transition-all hover:opacity-90 active:scale-95 border" style="background-color: #ffffff; border-color: #3b82f6; color: #3b82f6;"> Create Account </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Register Page -->
+   <div id="register-page" class="hidden min-h-screen flex items-center justify-center px-4 py-10">
+    <div class="login-container w-full max-w-md">
+     <div class="absolute -left-48 -top-48 h-96 w-96 rounded-full opacity-10 blur-3xl" style="background-color: #3b82f6;"></div>
+     <div class="absolute -bottom-48 -right-48 h-96 w-96 rounded-full opacity-5 blur-3xl" style="background-color: #3b82f6;"></div>
+     <div class="relative rounded-2xl border p-8 backdrop-blur-xl" style="background-color: #ffffff; border-color: #e0e7ff;">
+      <div class="mb-8">
+       <h1 class="font-display text-3xl font-bold mb-2">Join SAI U</h1>
+       <p class="text-sm" style="color: #64748b;">Create your account to start discovering campus events</p>
+      </div>
+      <div id="signup-error-message" class="error-message mb-4 rounded-lg px-4 py-3 text-sm">
+       <div class="flex items-center gap-2">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg><span id="signup-error-text">Please fill in all fields correctly</span>
+       </div>
+      </div>
+      <div id="signup-success-message" class="success-message mb-4 rounded-lg px-4 py-3 text-sm">
+       <div class="flex items-center gap-2">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg><span id="signup-success-text">Account created! You can now sign in.</span>
+       </div>
+      </div>
+      <form id="signup-form" class="mb-6">
+       <div class="mb-4"><label for="signup-name" class="block text-sm font-medium mb-2">Full Name</label> <input type="text" id="signup-name" placeholder="John Doe" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required>
+       </div>
+       <div class="mb-4"><label for="signup-email" class="block text-sm font-medium mb-2">Email Address</label> <input type="email" id="signup-email" placeholder="student@university.edu" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required>
+       </div>
+       <div class="mb-4"><label for="signup-department" class="block text-sm font-medium mb-2">Department</label> <input type="text" id="signup-department" placeholder="e.g., Computer Science" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required>
+       </div>
+       <div class="mb-4"><label for="signup-year" class="block text-sm font-medium mb-2">Academic Year</label> <select id="signup-year" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required> <option value="">Select your year</option> <option value="1st">1st Year</option> <option value="2nd">2nd Year</option> <option value="3rd">3rd Year</option> <option value="4th">4th Year</option> <option value="postgrad">Postgraduate</option> </select>
+       </div>
+       <div class="mb-4"><label for="signup-reg-number" class="block text-sm font-medium mb-2">Registration Number</label> <input type="text" id="signup-reg-number" placeholder="e.g., SAI2024001" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required>
+       </div>
+       <div class="mb-4"><label for="signup-password" class="block text-sm font-medium mb-2">Password</label>
+        <div class="relative"><input type="password" id="signup-password" placeholder="••••••••" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required> <button type="button" class="toggle-password-signup absolute right-3 top-1/2 -translate-y-1/2 transition-colors" style="color: #94a3b8;">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg></button>
+        </div>
+       </div>
+       <div class="mb-6"><label for="signup-confirm" class="block text-sm font-medium mb-2">Confirm Password</label>
+        <div class="relative"><input type="password" id="signup-confirm" placeholder="••••••••" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required> <button type="button" class="toggle-password-signup absolute right-3 top-1/2 -translate-y-1/2 transition-colors" style="color: #94a3b8;">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg></button>
+        </div>
+       </div>
+       <div class="mb-6 flex items-start gap-2"><input type="checkbox" id="signup-agree" class="h-4 w-4 rounded border transition-colors cursor-pointer mt-1" style="background-color: #ffffff; border-color: #e2e8f0; accent-color: #3b82f6;" required> <label for="signup-agree" class="text-sm cursor-pointer" style="color: #64748b;"> I agree to the Terms of Service and Privacy Policy </label>
+       </div><button type="submit" class="signup-submit w-full rounded-lg py-3 text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-95" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"> Create Account </button>
+      </form>
+      <div class="text-center text-sm" style="color: #64748b;">
+       Already have an account? <button id="back-to-welcome-from-signup" class="font-semibold transition-colors" style="background: none; border: none; cursor: pointer; color: #3b82f6;">Sign in</button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Login Page -->
+   <div id="login-page" class="hidden min-h-screen flex items-center justify-center px-4 py-10">
+    <div class="login-container w-full max-w-md">
+     <div class="absolute -left-48 -top-48 h-96 w-96 rounded-full opacity-10 blur-3xl" style="background-color: #3b82f6;"></div>
+     <div class="absolute -bottom-48 -right-48 h-96 w-96 rounded-full opacity-5 blur-3xl" style="background-color: #3b82f6;"></div>
+     <div class="relative rounded-2xl border p-8 backdrop-blur-xl" style="background-color: #ffffff; border-color: #e0e7ff;">
+      <div class="mb-8 text-center">
+       <h1 id="login-title" class="font-display text-3xl font-bold mb-2">Welcome Back</h1>
+       <p id="login-subtitle" class="text-sm" style="color: #64748b;">Sign in to discover amazing events</p>
+      </div>
+      <div id="login-error-message" class="error-message mb-4 rounded-lg px-4 py-3 text-sm">
+       <div class="flex items-center gap-2">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg><span id="login-error-text">Invalid email or password</span>
+       </div>
+      </div>
+      <form id="login-form" class="mb-6">
+       <div class="mb-4"><label for="login-email" class="block text-sm font-medium mb-2">Email Address</label> <input type="email" id="login-email" placeholder="student@university.edu" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required>
+       </div>
+       <div class="mb-6">
+        <div class="flex items-center justify-between mb-2"><label for="login-password" class="block text-sm font-medium">Password</label> <a href="#" class="text-xs font-medium transition-colors" style="color: #3b82f6;"> Forgot password? </a>
+        </div>
+        <div class="relative"><input type="password" id="login-password" placeholder="••••••••" class="login-input w-full rounded-lg border px-4 py-3 text-sm focus:ring-2" required> <button type="button" class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 transition-colors" style="color: #94a3b8;">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg></button>
+        </div>
+       </div>
+       <div class="mb-6 flex items-center gap-2"><input type="checkbox" id="login-remember" class="h-4 w-4 rounded border transition-colors cursor-pointer" style="background-color: #ffffff; border-color: #e2e8f0; accent-color: #3b82f6;"> <label for="login-remember" class="text-sm cursor-pointer" style="color: #64748b;">Remember me on this device</label>
+       </div><button type="submit" class="login-submit w-full rounded-lg py-3 text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-95" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"> Sign In </button>
+      </form>
+      <div class="text-center text-sm" style="color: #64748b;">
+       Don't have an account? <button id="back-to-welcome-from-login" class="font-semibold transition-colors" style="background: none; border: none; cursor: pointer; color: #3b82f6;">Create one</button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Events Browse Page -->
+   <div id="events-page" class="hidden">
+    <nav class="sticky top-0 z-40 border-b backdrop-blur-lg" style="background-color: rgba(255, 255, 255, 0.95); border-color: #e0e7ff;">
+     <div class="mx-auto max-w-6xl px-4 py-4">
+      <div class="flex items-center justify-between">
+       <div class="flex items-center gap-3"><button id="events-back-btn" class="back-button rounded-lg p-2 flex-shrink-0" style="background-color: #f8fafc; border: 1px solid #e0e7ff; color: #1e293b;">
+         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+         </svg></button>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg flex-shrink-0" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
+         <svg class="h-7 w-7 text-white" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+         </svg>
+        </div>
+        <div class="flex flex-col"><span class="font-display text-base font-bold leading-tight" style="color: #1e293b;">SAI</span> <span class="font-body text-xs font-medium" style="color: #3b82f6;">University</span>
+        </div>
+       </div>
+       <div class="flex items-center gap-4"><a href="#" id="dashboard-link" class="text-sm font-medium transition-colors" style="color: #64748b;">Dashboard</a> <a href="#events" class="text-sm font-medium transition-colors" style="color: #64748b;">Events</a> <button id="logout-btn" class="rounded-lg px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"> Sign Out </button>
+       </div>
+      </div>
+     </div>
+    </nav>
+    <section class="relative overflow-hidden py-16 md:py-24" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+     <div class="mx-auto max-w-6xl px-4 text-center">
+      <div class="animate-fade-up"><span class="inline-block rounded-full px-4 py-1.5 text-xs font-medium" style="background-color: rgba(59, 130, 246, 0.2); color: #3b82f6;"> ✨ Spring 2026 Events Now Live </span>
+      </div>
+      <h1 id="hero-title" class="animate-fade-up mt-6 font-display text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl" style="animation-delay: 0.1s; color: #1e293b;">Discover Campus Events</h1>
+      <p id="hero-subtitle" class="animate-fade-up mx-auto mt-4 max-w-2xl text-lg" style="color: #64748b; animation-delay: 0.2s;">Find and join amazing events happening around campus. From tech talks to cultural festivals, never miss out on what matters.</p>
+     </div>
+    </section>
+    <section id="events" class="mx-auto max-w-6xl px-4 py-10">
+     <div class="mb-6 animate-fade-up">
+      <h2 class="font-display text-2xl font-bold md:text-3xl" style="color: #1e293b;">Upcoming Events</h2>
+      <p id="event-count" class="mt-1" style="color: #64748b;">12 events found</p>
+     </div>
+     <div class="mb-8 animate-fade-up-delay">
+      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+       <div class="relative flex-1 max-w-md">
+        <svg class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2" style="color: #94a3b8;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg><input type="text" id="search-input" placeholder="Search events, venues, or tags..." class="search-input w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm transition-all focus:outline-none focus:ring-2" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;">
+       </div>
+       <div class="flex flex-wrap gap-2" id="category-filters"><button data-category="" class="category-pill active rounded-full px-4 py-2 text-sm font-medium transition-all" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white;"> All </button> <button data-category="tech" class="category-pill rounded-full border px-4 py-2 text-sm font-medium transition-all" style="background-color: #ffffff; border-color: #e0e7ff; color: #1e293b;"> 💻 Tech </button> <button data-category="cultural" class="category-pill rounded-full border px-4 py-2 text-sm font-medium transition-all" style="background-color: #ffffff; border-color: #e0e7ff; color: #1e293b;"> 🎭 Cultural </button> <button data-category="sports" class="category-pill rounded-full border px-4 py-2 text-sm font-medium transition-all" style="background-color: #ffffff; border-color: #e0e7ff; color: #1e293b;"> ⚽ Sports </button> <button data-category="academic" class="category-pill rounded-full border px-4 py-2 text-sm font-medium transition-all" style="background-color: #ffffff; border-color: #e0e7ff; color: #1e293b;"> 📚 Academic </button> <button data-category="social" class="category-pill rounded-full border px-4 py-2 text-sm font-medium transition-all" style="background-color: #ffffff; border-color: #e0e7ff; color: #1e293b;"> 🎉 Social </button>
+       </div>
+      </div>
+     </div>
+     <div id="events-grid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+     </div>
+     <div id="empty-state" class="hidden rounded-xl border p-12 text-center shadow-lg" style="background-color: #f0f9ff; border-color: #e0e7ff;">
+      <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full" style="background-color: rgba(59, 130, 246, 0.1);">
+       <svg class="h-8 w-8" style="color: #3b82f6;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg>
+      </div>
+      <p class="text-lg font-semibold" style="color: #1e293b;">No events found</p>
+      <p class="mt-1" style="color: #64748b;">Try adjusting your search or filters</p>
+     </div>
+    </section>
+    <footer class="border-t py-8" style="background-color: #f8fafc; border-color: #e0e7ff;">
+     <div class="mx-auto max-w-6xl px-4 text-center text-sm" style="color: #64748b;">
+      <p id="footer-text">© 2026 SAI U. Built for students, by students.</p>
+     </div>
+    </footer>
+   </div><!-- Event Detail Page -->
+   <div id="event-detail-page" class="hidden">
+    <nav class="sticky top-0 z-40 border-b backdrop-blur-lg" style="background-color: rgba(255, 255, 255, 0.95); border-color: #e0e7ff;">
+     <div class="mx-auto max-w-6xl px-4 py-4">
+      <div class="flex items-center justify-between"><button id="detail-back-btn" class="back-button rounded-lg p-2 flex-shrink-0" style="background-color: #f8fafc; border: 1px solid #e0e7ff; color: #1e293b;">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg></button> <button id="detail-logout-btn" class="rounded-lg px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"> Sign Out </button>
+      </div>
+     </div>
+    </nav>
+    <div class="mx-auto max-w-4xl px-4 py-10">
+     <div id="event-detail-content" class="space-y-6"><!-- Event header will be inserted here -->
+     </div>
+    </div>
+    <footer class="border-t py-8" style="background-color: #f8fafc; border-color: #e0e7ff;">
+     <div class="mx-auto max-w-6xl px-4 text-center text-sm" style="color: #64748b;">
+      <p id="detail-footer-text">© 2026 SAI U. Built for students, by students.</p>
+     </div>
+    </footer>
+   </div><!-- Dashboard Page -->
+   <div id="dashboard-page" class="hidden">
+    <nav class="sticky top-0 z-40 border-b backdrop-blur-lg" style="background-color: rgba(255, 255, 255, 0.95); border-color: #e0e7ff;">
+     <div class="mx-auto max-w-6xl px-4 py-4">
+      <div class="flex items-center justify-between">
+       <div class="flex items-center gap-3"><button id="dashboard-back-btn" class="back-button rounded-lg p-2 flex-shrink-0" style="background-color: #f8fafc; border: 1px solid #e0e7ff; color: #1e293b;">
+         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+         </svg></button>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg flex-shrink-0" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
+         <svg class="h-7 w-7 text-white" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+         </svg>
+        </div>
+        <div class="flex flex-col"><span class="font-display text-base font-bold leading-tight" style="color: #1e293b;">SAI</span> <span class="font-body text-xs font-medium" style="color: #3b82f6;">University</span>
+        </div>
+       </div>
+       <div class="flex items-center gap-4"><a href="#" id="events-link" class="text-sm font-medium transition-colors" style="color: #64748b;">Browse Events</a> <button id="dashboard-logout-btn" class="rounded-lg px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"> Sign Out </button>
+       </div>
+      </div>
+     </div>
+    </nav>
+    <div class="mx-auto max-w-6xl px-4 py-10"><!-- Profile Section -->
+     <div class="mb-8 animate-fade-up">
+      <div class="flex items-center justify-between mb-6">
+       <div>
+        <h1 class="font-display text-4xl font-bold mb-2" style="color: #1e293b;">Dashboard</h1>
+        <p style="color: #64748b;">Welcome back, <span id="dashboard-user-name">John Doe</span>!</p>
+       </div>
+       <div class="flex h-16 w-16 items-center justify-center rounded-full text-3xl" style="background-color: #f0f9ff; border: 2px solid #e0e7ff;">
+        👤
+       </div>
+      </div>
+     </div><!-- Statistics -->
+     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div class="dashboard-stat rounded-xl border p-6" style="background-color: #ffffff; border-color: #e0e7ff;">
+       <div class="flex items-start justify-between">
+        <div>
+         <p class="text-sm font-medium" style="color: #64748b;">Registered Events</p>
+         <p class="mt-2 font-display text-3xl font-bold" id="stat-registered" style="color: #1e293b;">0</p>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg" style="background-color: rgba(59, 130, 246, 0.1);">
+         <svg class="h-6 w-6" style="color: #3b82f6;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+         </svg>
+        </div>
+       </div>
+      </div>
+      <div class="dashboard-stat rounded-xl border p-6" style="background-color: #ffffff; border-color: #e0e7ff;">
+       <div class="flex items-start justify-between">
+        <div>
+         <p class="text-sm font-medium" style="color: #64748b;">Upcoming</p>
+         <p class="mt-2 font-display text-3xl font-bold" id="stat-upcoming" style="color: #1e293b;">0</p>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg" style="background-color: rgba(34, 197, 94, 0.1);">
+         <svg class="h-6 w-6" style="color: #22c55e;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+         </svg>
+        </div>
+       </div>
+      </div>
+      <div class="dashboard-stat rounded-xl border p-6" style="background-color: #ffffff; border-color: #e0e7ff;">
+       <div class="flex items-start justify-between">
+        <div>
+         <p class="text-sm font-medium" style="color: #64748b;">Completed</p>
+         <p class="mt-2 font-display text-3xl font-bold" id="stat-completed" style="color: #1e293b;">0</p>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg" style="background-color: rgba(59, 130, 246, 0.1);">
+         <svg class="h-6 w-6" style="color: #3b82f6;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+         </svg>
+        </div>
+       </div>
+      </div>
+      <div class="dashboard-stat rounded-xl border p-6" style="background-color: #ffffff; border-color: #e0e7ff;">
+       <div class="flex items-start justify-between">
+        <div>
+         <p class="text-sm font-medium" style="color: #64748b;">Cancelled</p>
+         <p class="mt-2 font-display text-3xl font-bold" id="stat-cancelled" style="color: #1e293b;">0</p>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg" style="background-color: rgba(239, 68, 68, 0.1);">
+         <svg class="h-6 w-6" style="color: #ef4444;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+         </svg>
+        </div>
+       </div>
+      </div>
+     </div><!-- Registered Events -->
+     <div class="animate-fade-up-delay">
+      <h2 class="font-display text-2xl font-bold mb-4" style="color: #1e293b;">Your Registered Events</h2>
+      <div id="registered-events-list" class="rounded-xl border" style="background-color: #ffffff; border-color: #e0e7ff;">
+       <div id="no-events-message" class="p-8 text-center">
+        <svg class="mx-auto h-12 w-12 mb-4" style="color: #94a3b8;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="font-semibold" style="color: #1e293b;">No registered events yet</p>
+        <p class="mt-1" style="color: #64748b;">Browse events and register to see them here</p><a href="#" id="browse-events-btn" class="inline-block mt-4 rounded-lg px-6 py-2 text-sm font-semibold text-white transition-all hover:opacity-90" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"> Browse Events </a>
+       </div>
+      </div>
+     </div>
+    </div>
+    <footer class="border-t py-8 mt-10" style="background-color: #f8fafc; border-color: #e0e7ff;">
+     <div class="mx-auto max-w-6xl px-4 text-center text-sm" style="color: #64748b;">
+      <p id="dashboard-footer-text">© 2026 SAI U. Built for students, by students.</p>
+     </div>
+    </footer>
+   </div>
+  </div>
+  <script>
+    // Sample Events Data
+    const sampleEvents = [
+      {
+        id: '1',
+        title: 'AI & Machine Learning Workshop',
+        description: 'Hands-on workshop exploring neural networks and practical ML applications with Python.',
+        fullDescription: 'Join us for an intensive hands-on workshop where you\'ll learn the fundamentals of neural networks, train your first ML model, and explore real-world applications. This workshop is perfect for beginners and intermediate developers looking to enter the AI/ML space.',
+        date: '2026-03-15',
+        time: '14:00',
+        venue: 'Tech Center, Room 301',
+        category: 'tech',
+        tags: ['AI', 'Python', 'Workshop'],
+        attendees: 127,
+        maxCapacity: 150,
+        image: 'gradient-tech',
+        status: 'upcoming',
+        organizer: 'Tech Club',
+        duration: '3 hours',
+        level: 'Beginner to Intermediate'
+      },
+      {
+        id: '2',
+        title: 'Spring Cultural Festival',
+        description: 'Celebrate diversity with performances, food, and art from cultures around the world.',
+        fullDescription: 'Experience a vibrant celebration of global cultures! Enjoy traditional music and dance performances, sample authentic cuisine from 15+ countries, view beautiful artwork, and connect with students from diverse backgrounds. Free admission for all students.',
+        date: '2026-03-20',
+        time: '11:00',
+        venue: 'Main Quad',
+        category: 'cultural',
+        tags: ['Festival', 'Food', 'Music'],
+        attendees: 450,
+        maxCapacity: 1000,
+        image: 'gradient-cultural',
+        status: 'upcoming',
+        organizer: 'International Students Association',
+        duration: '6 hours',
+        level: 'All Welcome'
+      },
+      {
+        id: '3',
+        title: 'Intramural Basketball Finals',
+        description: 'Watch the top teams compete for the championship title. Free snacks for attendees!',
+        fullDescription: 'The championship match of our intramural basketball tournament! Watch the best student teams battle it out for the title. Free popcorn and drinks for all spectators. Come show your school spirit!',
+        date: '2026-03-18',
+        time: '19:00',
+        venue: 'Sports Complex Arena',
+        category: 'sports',
+        tags: ['Basketball', 'Competition', 'Finals'],
+        attendees: 320,
+        maxCapacity: 500,
+        image: 'gradient-sports',
+        status: 'upcoming',
+        organizer: 'Athletic Department',
+        duration: '2.5 hours',
+        level: 'All Welcome'
+      },
+      {
+        id: '4',
+        title: 'Guest Lecture: Climate Science',
+        description: 'Dr. Sarah Chen discusses latest research on climate patterns and sustainability.',
+        fullDescription: 'Renowned climate scientist Dr. Sarah Chen will share groundbreaking research on global climate patterns, the impact of human activities, and sustainable solutions for our future. Q&A session included.',
+        date: '2026-03-22',
+        time: '16:00',
+        venue: 'Science Building Auditorium',
+        category: 'academic',
+        tags: ['Science', 'Lecture', 'Climate'],
+        attendees: 89,
+        maxCapacity: 200,
+        image: 'gradient-academic',
+        status: 'upcoming',
+        organizer: 'Environmental Science Department',
+        duration: '1.5 hours',
+        level: 'All Welcome'
+      },
+      {
+        id: '5',
+        title: 'Welcome Week Mixer',
+        description: 'Meet new friends, enjoy music, and start the semester right with free refreshments.',
+        fullDescription: 'Kick off the semester with your peers! This mixer features DJ music, food and drinks, lawn games, and the perfect opportunity to meet new people. No need to register, just come by!',
+        date: '2026-03-25',
+        time: '20:00',
+        venue: 'Student Union Ballroom',
+        category: 'social',
+        tags: ['Networking', 'Party', 'Welcome'],
+        attendees: 275,
+        maxCapacity: 300,
+        image: 'gradient-social',
+        status: 'upcoming',
+        organizer: 'Student Life',
+        duration: '3 hours',
+        level: 'All Welcome'
+      },
+      {
+        id: '6',
+        title: 'Hackathon 2026',
+        description: '24-hour coding challenge. Build innovative solutions and compete for prizes.',
+        fullDescription: 'Build your next big idea during our 24-hour hackathon! Form teams, get mentored by industry professionals, and compete for $3000 in prizes. Meals and snacks provided throughout the event.',
+        date: '2026-04-01',
+        time: '09:00',
+        venue: 'Innovation Hub',
+        category: 'tech',
+        tags: ['Coding', 'Competition', 'Innovation'],
+        attendees: 180,
+        maxCapacity: 200,
+        image: 'gradient-tech',
+        status: 'upcoming',
+        organizer: 'Developer Club',
+        duration: '24 hours',
+        level: 'All Skill Levels Welcome'
+      },
+      {
+        id: '7',
+        title: 'Poetry Open Mic Night',
+        description: 'Share your words or listen to fellow poets in an intimate coffeehouse setting.',
+        fullDescription: 'An evening of spoken word and poetry! Whether you\'re a seasoned poet or first-time performer, this is your stage. Open to all styles and themes. Free coffee and desserts provided.',
+        date: '2026-03-28',
+        time: '19:30',
+        venue: 'Campus Café',
+        category: 'cultural',
+        tags: ['Poetry', 'Arts', 'Performance'],
+        attendees: 45,
+        maxCapacity: 60,
+        image: 'gradient-cultural',
+        status: 'upcoming',
+        organizer: 'Creative Writing Club',
+        duration: '2 hours',
+        level: 'All Welcome'
+      },
+      {
+        id: '8',
+        title: 'Yoga in the Park',
+        description: 'Relaxing outdoor yoga session for all skill levels. Bring your own mat.',
+        fullDescription: 'Start your morning right with a peaceful yoga session in the park! Led by a certified instructor, this class welcomes all fitness levels. Bring your own mat and join us for good vibes.',
+        date: '2026-03-30',
+        time: '07:00',
+        venue: 'Central Park Lawn',
+        category: 'sports',
+        tags: ['Yoga', 'Wellness', 'Outdoor'],
+        attendees: 38,
+        maxCapacity: 50,
+        image: 'gradient-sports',
+        status: 'upcoming',
+        organizer: 'Wellness Club',
+        duration: '1 hour',
+        level: 'All Levels'
+      },
+      {
+        id: '9',
+        title: 'Career Fair: Tech Edition',
+        description: 'Connect with top tech companies recruiting for internships and full-time roles.',
+        fullDescription: 'Meet recruiters from leading tech companies including Google, Microsoft, Apple, and more! Learn about internship and full-time opportunities, interview tips, and career paths in technology.',
+        date: '2026-04-05',
+        time: '10:00',
+        venue: 'Convention Center',
+        category: 'academic',
+        tags: ['Career', 'Networking', 'Jobs'],
+        attendees: 520,
+        maxCapacity: 800,
+        image: 'gradient-academic',
+        status: 'upcoming',
+        organizer: 'Career Services',
+        duration: '4 hours',
+        level: 'All Students Welcome'
+      },
+      {
+        id: '10',
+        title: 'Movie Night: Outdoor Cinema',
+        description: 'Watch a classic film under the stars. Popcorn and blankets provided.',
+        fullDescription: 'Bring your friends and enjoy a classic movie under the stars! Blankets and chairs provided, plus complimentary popcorn and candy. Rain date will be announced if needed.',
+        date: '2026-04-02',
+        time: '21:00',
+        venue: 'Amphitheater',
+        category: 'social',
+        tags: ['Movie', 'Outdoor', 'Fun'],
+        attendees: 190,
+        maxCapacity: 250,
+        image: 'gradient-social',
+        status: 'upcoming',
+        organizer: 'Entertainment Board',
+        duration: '2 hours',
+        level: 'All Welcome'
+      },
+      {
+        id: '11',
+        title: 'Robotics Demo Day',
+        description: 'See student-built robots in action and learn about the robotics club.',
+        fullDescription: 'Watch our student robotics team showcase their latest creations! See robots navigate obstacle courses, perform tasks, and compete. Join the club Q&A to learn how to get involved.',
+        date: '2026-04-08',
+        time: '13:00',
+        venue: 'Engineering Building',
+        category: 'tech',
+        tags: ['Robotics', 'Demo', 'Engineering'],
+        attendees: 95,
+        maxCapacity: 120,
+        image: 'gradient-tech',
+        status: 'upcoming',
+        organizer: 'Robotics Club',
+        duration: '1.5 hours',
+        level: 'All Welcome'
+      },
+      {
+        id: '12',
+        title: 'International Food Festival',
+        description: 'Taste cuisines from 20+ countries prepared by student cultural organizations.',
+        fullDescription: 'Embark on a culinary world tour! Sample authentic dishes from 20+ countries, all prepared by student cultural organizations. Limited quantities, so arrive early! Cash and card accepted.',
+        date: '2026-04-12',
+        time: '12:00',
+        venue: 'University Center Plaza',
+        category: 'cultural',
+        tags: ['Food', 'International', 'Festival'],
+        attendees: 680,
+        maxCapacity: 1000,
+        image: 'gradient-cultural',
+        status: 'upcoming',
+        organizer: 'Culinary Club',
+        duration: '3 hours',
+        level: 'All Welcome'
+      }
+    ];
+
+    const categoryConfig = {
+      tech: { color: '#3b82f6', emoji: '💻', bgColor: 'rgba(59, 130, 246, 0.15)' },
+      cultural: { color: '#f59e0b', emoji: '🎭', bgColor: 'rgba(245, 158, 11, 0.15)' },
+      sports: { color: '#22c55e', emoji: '⚽', bgColor: 'rgba(34, 197, 94, 0.15)' },
+      academic: { color: '#3b82f6', emoji: '📚', bgColor: 'rgba(59, 130, 246, 0.15)' },
+      social: { color: '#ec4899', emoji: '🎉', bgColor: 'rgba(236, 72, 153, 0.15)' }
+    };
+
+    const imageGradients = {
+      'gradient-tech': 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+      'gradient-cultural': 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)',
+      'gradient-sports': 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)',
+      'gradient-academic': 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+      'gradient-social': 'linear-gradient(135deg, #fbcfe8 0%, #f9a8d4 100%)'
+    };
+
+    // App State
+    let searchTerm = '';
+    let selectedCategory = '';
+    let registeredEvents = [];
+    let currentUser = null;
+    let registeredAccounts = {};
+
+    // Initialize registered accounts from localStorage
+    function initializeAccounts() {
+      const saved = localStorage.getItem('registeredAccounts');
+      if (saved) {
+        registeredAccounts = JSON.parse(saved);
+      }
+    }
+
+    // Save accounts to localStorage
+    function saveAccounts() {
+      localStorage.setItem('registeredAccounts', JSON.stringify(registeredAccounts));
+    }
+
+    const defaultConfig = {
+      site_title: 'SAI U',
+      login_title: 'Welcome Back',
+      login_subtitle: 'Sign in to discover amazing events',
+      hero_title: 'Discover Campus Events',
+      hero_subtitle: 'Find and join amazing events happening around campus. From tech talks to cultural festivals, never miss out on what matters.',
+      footer_text: '© 2026 SAI U. Built for students, by students.',
+      primary_color: '#3b82f6',
+      background_color: '#ffffff',
+      card_color: '#ffffff',
+      text_color: '#1e293b',
+      muted_color: '#64748b',
+      font_family: 'Space Grotesk',
+      font_size: 16
+    };
+
+    // Utility Functions
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+
+    function createEventCard(event, index, isRegistered = false) {
+      const config = categoryConfig[event.category];
+      const gradient = imageGradients[event.image];
+      const fillPercentage = Math.round((event.attendees / event.maxCapacity) * 100);
+      const spotsLeft = event.maxCapacity - event.attendees;
+      
+      return `
+        <div class="event-card animate-fade-up rounded-xl border overflow-hidden cursor-pointer" 
+             style="background-color: #ffffff; border-color: #e0e7ff; animation-delay: ${index * 0.05}s;" data-event-id="${event.id}">
+          <div class="relative h-40 overflow-hidden" style="background: ${gradient};">
+            <div class="absolute inset-0 flex items-center justify-center text-6xl opacity-30">
+              ${config.emoji}
+            </div>
+            <div class="absolute top-3 left-3">
+              <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm"
+                    style="background-color: ${config.bgColor}; color: ${config.color};">
+                ${config.emoji} ${event.category.charAt(0).toUpperCase() + event.category.slice(1)}
+              </span>
+            </div>
+            <div class="absolute top-3 right-3">
+              <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm"
+                    style="background-color: rgba(255,255,255,0.8); color: #1e293b;">
+                ${spotsLeft <= 20 ? '🔥' : ''} ${spotsLeft} spots left
+              </span>
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <h3 class="font-display font-semibold text-lg leading-tight mb-2" style="color: #1e293b;">
+              ${event.title}
+            </h3>
+            <p class="text-sm mb-3 line-clamp-2" style="color: #64748b;">
+              ${event.description}
+            </p>
+            
+            <div class="flex flex-wrap gap-3 text-xs mb-3" style="color: #64748b;">
+              <span class="flex items-center gap-1">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                ${formatDate(event.date)}
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                ${event.time}
+              </span>
+            </div>
+            
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              ${event.tags.map(tag => `
+                <span class="rounded-full px-2 py-0.5 text-xs font-medium" 
+                      style="background-color: #f0f9ff; color: #3b82f6;">
+                  #${tag}
+                </span>
+              `).join('')}
+            </div>
+            
+            <div class="mb-4">
+              <div class="flex justify-between text-xs mb-1" style="color: #64748b;">
+                <span>${event.attendees} attending</span>
+                <span>${fillPercentage}% full</span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background-color: #e0e7ff;">
+                <div class="h-full rounded-full transition-all duration-500" 
+                     style="width: ${fillPercentage}%; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"></div>
+              </div>
+            </div>
+            
+            <button class="view-event-btn w-full rounded-lg py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90" data-event-id="${event.id}"
+                    style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+              View Details
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function filterAndRenderEvents() {
+      const filtered = sampleEvents.filter(event => {
+        const matchesSearch = !searchTerm || 
+          event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.venue.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        const matchesCategory = !selectedCategory || event.category === selectedCategory;
+        
+        return matchesSearch && matchesCategory;
+      });
+
+      const grid = document.getElementById('events-grid');
+      const emptyState = document.getElementById('empty-state');
+      const countEl = document.getElementById('event-count');
+
+      countEl.textContent = `${filtered.length} event${filtered.length !== 1 ? 's' : ''} found`;
+
+      if (filtered.length > 0) {
+        grid.innerHTML = filtered.map((event, index) => {
+          const isReg = registeredEvents.some(e => e.id === event.id);
+          return createEventCard(event, index, isReg);
+        }).join('');
+        grid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        attachEventHandlers();
+      } else {
+        grid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+      }
+    }
+
+    function attachEventHandlers() {
+      document.querySelectorAll('.view-event-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const eventId = this.dataset.eventId;
+          const event = sampleEvents.find(e => e.id === eventId);
+          showEventDetail(event);
+        });
+      });
+    }
+
+    function showEventDetail(event) {
+      const isRegistered = registeredEvents.some(e => e.id === event.id);
+      const config = categoryConfig[event.category];
+      const gradient = imageGradients[event.image];
+      const fillPercentage = Math.round((event.attendees / event.maxCapacity) * 100);
+      const spotsLeft = event.maxCapacity - event.attendees;
+
+      const detailHTML = `
+        <div class="animate-fade-up rounded-xl border overflow-hidden" style="background-color: #ffffff; border-color: #e0e7ff;">
+          <div class="relative h-64 overflow-hidden" style="background: ${gradient};">
+            <div class="absolute inset-0 flex items-center justify-center text-8xl opacity-20">
+              ${config.emoji}
+            </div>
+            <div class="absolute top-4 left-4">
+              <span class="inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium backdrop-blur-sm"
+                    style="background-color: ${config.bgColor}; color: ${config.color};">
+                ${config.emoji} ${event.category.charAt(0).toUpperCase() + event.category.slice(1)}
+              </span>
+            </div>
+          </div>
+
+          <div class="p-8">
+            <h1 class="font-display text-4xl font-bold mb-2" style="color: #1e293b;">
+              ${event.title}
+            </h1>
+            
+            <div class="flex flex-wrap gap-6 mb-6" style="color: #64748b;">
+              <span class="flex items-center gap-2">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                ${formatDate(event.date)}
+              </span>
+              <span class="flex items-center gap-2">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                ${event.time}
+              </span>
+              <span class="flex items-center gap-2">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                ${event.venue}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8 md:grid-cols-4">
+              <div class="rounded-lg p-4" style="background-color: #f0f9ff; border: 1px solid #e0e7ff;">
+                <p class="text-sm" style="color: #64748b;">Duration</p>
+                <p class="font-semibold mt-1" style="color: #1e293b;">${event.duration}</p>
+              </div>
+              <div class="rounded-lg p-4" style="background-color: #f0f9ff; border: 1px solid #e0e7ff;">
+                <p class="text-sm" style="color: #64748b;">Level</p>
+                <p class="font-semibold mt-1" style="color: #1e293b;">${event.level}</p>
+              </div>
+              <div class="rounded-lg p-4" style="background-color: #f0f9ff; border: 1px solid #e0e7ff;">
+                <p class="text-sm" style="color: #64748b;">Attendees</p>
+                <p class="font-semibold mt-1" style="color: #1e293b;">${event.attendees}/${event.maxCapacity}</p>
+              </div>
+              <div class="rounded-lg p-4" style="background-color: #f0f9ff; border: 1px solid #e0e7ff;">
+                <p class="text-sm" style="color: #64748b;">Organizer</p>
+                <p class="font-semibold mt-1" style="color: #1e293b;">${event.organizer}</p>
+              </div>
+            </div>
+
+            <div class="mb-8">
+              <h2 class="font-display text-2xl font-bold mb-3" style="color: #1e293b;">About This Event</h2>
+              <p class="leading-relaxed" style="color: #475569; line-height: 1.6;">
+                ${event.fullDescription}
+              </p>
+            </div>
+
+            <div class="mb-8">
+              <h3 class="font-semibold mb-3" style="color: #1e293b;">Event Tags</h3>
+              <div class="flex flex-wrap gap-2">
+                ${event.tags.map(tag => `
+                  <span class="rounded-full px-4 py-2 text-sm font-medium" 
+                        style="background-color: #f0f9ff; color: #3b82f6;">
+                    #${tag}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="mb-8">
+              <h3 class="font-semibold mb-3" style="color: #1e293b;">Event Progress</h3>
+              <div class="space-y-2">
+                <div class="flex justify-between text-sm">
+                  <span style="color: #64748b;">Attendees: ${event.attendees}/${event.maxCapacity}</span>
+                  <span style="color: #64748b;">${fillPercentage}% Full</span>
+                </div>
+                <div class="h-3 rounded-full overflow-hidden" style="background-color: #e0e7ff;">
+                  <div class="h-full rounded-full transition-all duration-500" 
+                       style="width: ${fillPercentage}%; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);"></div>
+                </div>
+              </div>
+            </div>
+
+            <button id="register-event-detail-btn" class="w-full rounded-lg py-3 text-lg font-semibold text-white transition-all hover:opacity-90" data-event-id="${event.id}" data-registered="${isRegistered}"
+                    style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+              ${isRegistered ? 'Unregister from Event' : 'Register for Event'}
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('event-detail-content').innerHTML = detailHTML;
+      document.getElementById('detail-footer-text').textContent = defaultConfig.footer_text;
+
+      document.getElementById('register-event-detail-btn').addEventListener('click', function() {
+        const eventId = this.dataset.eventId;
+        const isReg = this.dataset.registered === 'true';
+        
+        if (isReg) {
+          registeredEvents = registeredEvents.filter(e => e.id !== eventId);
+          this.textContent = 'Register for Event';
+          this.dataset.registered = 'false';
+        } else {
+          registeredEvents.push(event);
+          this.textContent = 'Unregister from Event';
+          this.dataset.registered = 'true';
+        }
+        
+        updateDashboardStats();
+      });
+
+      navigateToEventDetail();
+    }
+
+    function updateDashboardStats() {
+      const now = new Date();
+      
+      const upcoming = registeredEvents.filter(e => new Date(e.date) > now).length;
+      const completed = registeredEvents.filter(e => new Date(e.date) <= now).length;
+      
+      document.getElementById('stat-registered').textContent = registeredEvents.length;
+      document.getElementById('stat-upcoming').textContent = upcoming;
+      document.getElementById('stat-completed').textContent = completed;
+      document.getElementById('stat-cancelled').textContent = '0';
+      
+      renderRegisteredEvents();
+    }
+
+    function renderRegisteredEvents() {
+      const container = document.getElementById('registered-events-list');
+      
+      if (registeredEvents.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center">
+            <svg class="mx-auto h-12 w-12 mb-4" style="color: #94a3b8;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="font-semibold" style="color: #1e293b;">No registered events yet</p>
+            <p class="mt-1" style="color: #64748b;">Browse events and register to see them here</p>
+            <a href="#" onclick="navigateToEvents(); return false;" class="inline-block mt-4 rounded-lg px-6 py-2 text-sm font-semibold text-white transition-all hover:opacity-90" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+              Browse Events
+            </a>
+          </div>
+        `;
+        return;
+      }
+      
+      const html = registeredEvents.map((event, index) => {
+        const config = categoryConfig[event.category];
+        return `
+          <div class="registered-event-item flex items-center gap-4 p-4 border-b cursor-pointer" style="border-color: #e0e7ff;" onclick="showEventDetail(window.sampleEvents.find(e => e.id === '${event.id}'))">
+            <div class="flex h-16 w-16 items-center justify-center rounded-lg text-2xl flex-shrink-0" style="background: ${imageGradients[event.image]};">
+              ${config.emoji}
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold" style="color: #1e293b;">${event.title}</h3>
+              <div class="flex flex-wrap gap-2 mt-1 text-xs" style="color: #64748b;">
+                <span>📅 ${formatDate(event.date)}</span>
+                <span>🕐 ${event.time}</span>
+                <span>📍 ${event.venue.split(',')[0]}</span>
+              </div>
+            </div>
+            <button class="unregister-btn flex-shrink-0 rounded-lg px-4 py-2 text-sm font-semibold transition-all" data-event-id="${event.id}" style="background-color: #ef4444; color: white; border: none; cursor: pointer;" onclick="event.stopPropagation()">
+              Unregister
+            </button>
+          </div>
+        `;
+      }).join('');
+      
+      container.innerHTML = html;
+      
+      document.querySelectorAll('.unregister-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const eventId = this.dataset.eventId;
+          registeredEvents = registeredEvents.filter(e => e.id !== eventId);
+          updateDashboardStats();
+        });
+      });
+    }
+
+    // Navigation Functions
+    function navigateToWelcome() {
+      document.getElementById('welcome-page').classList.remove('hidden');
+      document.getElementById('register-page').classList.add('hidden');
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('events-page').classList.add('hidden');
+      document.getElementById('dashboard-page').classList.add('hidden');
+      document.getElementById('event-detail-page').classList.add('hidden');
+    }
+
+    function navigateToRegister() {
+      document.getElementById('welcome-page').classList.add('hidden');
+      document.getElementById('register-page').classList.remove('hidden');
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('events-page').classList.add('hidden');
+      document.getElementById('dashboard-page').classList.add('hidden');
+      document.getElementById('event-detail-page').classList.add('hidden');
+    }
+
+    function navigateToLogin() {
+      document.getElementById('welcome-page').classList.add('hidden');
+      document.getElementById('register-page').classList.add('hidden');
+      document.getElementById('login-page').classList.remove('hidden');
+      document.getElementById('events-page').classList.add('hidden');
+      document.getElementById('dashboard-page').classList.add('hidden');
+      document.getElementById('event-detail-page').classList.add('hidden');
+    }
+
+    function navigateToEvents() {
+      document.getElementById('welcome-page').classList.add('hidden');
+      document.getElementById('register-page').classList.add('hidden');
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('events-page').classList.remove('hidden');
+      document.getElementById('dashboard-page').classList.add('hidden');
+      document.getElementById('event-detail-page').classList.add('hidden');
+      filterAndRenderEvents();
+    }
+
+    function navigateToDashboard() {
+      document.getElementById('welcome-page').classList.add('hidden');
+      document.getElementById('register-page').classList.add('hidden');
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('events-page').classList.add('hidden');
+      document.getElementById('dashboard-page').classList.remove('hidden');
+      document.getElementById('event-detail-page').classList.add('hidden');
+      updateDashboardStats();
+    }
+
+    function navigateToEventDetail() {
+      document.getElementById('welcome-page').classList.add('hidden');
+      document.getElementById('register-page').classList.add('hidden');
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('events-page').classList.add('hidden');
+      document.getElementById('dashboard-page').classList.add('hidden');
+      document.getElementById('event-detail-page').classList.remove('hidden');
+    }
+
+    // Password visibility
+    function initPasswordToggle() {
+      document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const input = this.parentElement.querySelector('input');
+          if (input.type === 'password') {
+            input.type = 'text';
+          } else {
+            input.type = 'password';
+          }
+        });
+      });
+
+      document.querySelectorAll('.toggle-password-signup').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const input = this.parentElement.querySelector('input');
+          if (input.type === 'password') {
+            input.type = 'text';
+          } else {
+            input.type = 'password';
+          }
+        });
+      });
+    }
+
+    // Signup functionality
+    function initSignup() {
+      const signupForm = document.getElementById('signup-form');
+      const errorMsg = document.getElementById('signup-error-message');
+      const successMsg = document.getElementById('signup-success-message');
+
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('signup-name').value;
+        const email = document.getElementById('signup-email').value;
+        const department = document.getElementById('signup-department').value;
+        const year = document.getElementById('signup-year').value;
+        const regNumber = document.getElementById('signup-reg-number').value;
+        const password = document.getElementById('signup-password').value;
+        const confirm = document.getElementById('signup-confirm').value;
+        const agree = document.getElementById('signup-agree').checked;
+
+        errorMsg.classList.remove('show');
+        successMsg.classList.remove('show');
+
+        if (!name || !email || !department || !year || !regNumber || !password || !confirm) {
+          showSignupError('Please fill in all fields');
+          return;
+        }
+
+        if (!email.includes('@')) {
+          showSignupError('Please enter a valid email');
+          return;
+        }
+
+        if (password.length < 6) {
+          showSignupError('Password must be at least 6 characters');
+          return;
+        }
+
+        if (password !== confirm) {
+          showSignupError('Passwords do not match');
+          return;
+        }
+
+        if (!agree) {
+          showSignupError('Please agree to Terms of Service');
+          return;
+        }
+
+        if (registeredAccounts[email]) {
+          showSignupError('This email is already registered');
+          return;
+        }
+
+        registeredAccounts[email] = { name, password, department, year, regNumber };
+        saveAccounts();
+        
+        successMsg.classList.add('show');
+        signupForm.reset();
+        
+        setTimeout(() => {
+          navigateToLogin();
+        }, 1500);
+      });
+
+      function showSignupError(message) {
+        const errorText = document.getElementById('signup-error-text');
+        errorText.textContent = message;
+        errorMsg.classList.add('show');
+        setTimeout(() => errorMsg.classList.remove('show'), 4000);
+      }
+    }
+
+    // Login functionality
+    function initLogin() {
+      const loginForm = document.getElementById('login-form');
+      const errorMsg = document.getElementById('login-error-message');
+
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        errorMsg.classList.remove('show');
+
+        if (!email || !password) {
+          showLoginError('Please fill in all fields');
+          return;
+        }
+
+        if (!email.includes('@')) {
+          showLoginError('Please enter a valid email');
+          return;
+        }
+
+        if (!registeredAccounts[email]) {
+          showLoginError('Please register first to login');
+          return;
+        }
+
+        if (registeredAccounts[email].password !== password) {
+          showLoginError('Invalid password');
+          return;
+        }
+
+        const account = registeredAccounts[email];
+        currentUser = { email, name: account.name };
+        document.getElementById('dashboard-user-name').textContent = account.name;
+        
+        loginForm.reset();
+        navigateToEvents();
+      });
+
+      function showLoginError(message) {
+        const errorText = document.getElementById('login-error-text');
+        errorText.textContent = message;
+        errorMsg.classList.add('show');
+        setTimeout(() => errorMsg.classList.remove('show'), 4000);
+      }
+    }
+
+    // Category filters
+    function initCategoryFilters() {
+      const buttons = document.querySelectorAll('#category-filters button');
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          buttons.forEach(b => {
+            b.classList.remove('active');
+            b.style.background = '#ffffff';
+            b.style.color = '#1e293b';
+            b.style.borderColor = '#e0e7ff';
+          });
+          button.classList.add('active');
+          button.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
+          button.style.color = 'white';
+          selectedCategory = button.dataset.category;
+          filterAndRenderEvents();
+        });
+      });
+    }
+
+    // Search
+    function initSearch() {
+      const searchInput = document.getElementById('search-input');
+      let debounceTimer;
+      
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          searchTerm = e.target.value;
+          filterAndRenderEvents();
+        }, 200);
+      });
+    }
+
+    // Logout
+    function initLogout() {
+      const logoutBtn = document.getElementById('logout-btn');
+      const dashboardLogoutBtn = document.getElementById('dashboard-logout-btn');
+      const detailLogoutBtn = document.getElementById('detail-logout-btn');
+      const dashboardLink = document.getElementById('dashboard-link');
+      const eventsLink = document.getElementById('events-link');
+      const browseEventsBtn = document.getElementById('browse-events-btn');
+
+      logoutBtn.addEventListener('click', () => {
+        currentUser = null;
+        registeredEvents = [];
+        navigateToWelcome();
+      });
+
+      dashboardLogoutBtn.addEventListener('click', () => {
+        currentUser = null;
+        registeredEvents = [];
+        navigateToWelcome();
+      });
+
+      detailLogoutBtn.addEventListener('click', () => {
+        currentUser = null;
+        registeredEvents = [];
+        navigateToWelcome();
+      });
+
+      dashboardLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateToDashboard();
+      });
+
+      eventsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateToEvents();
+      });
+
+      browseEventsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateToEvents();
+      });
+
+      const eventsBackBtn = document.getElementById('events-back-btn');
+      const dashboardBackBtn = document.getElementById('dashboard-back-btn');
+      const detailBackBtn = document.getElementById('detail-back-btn');
+
+      if (eventsBackBtn) {
+        eventsBackBtn.addEventListener('click', navigateToDashboard);
+      }
+
+      if (dashboardBackBtn) {
+        dashboardBackBtn.addEventListener('click', navigateToEvents);
+      }
+
+      if (detailBackBtn) {
+        detailBackBtn.addEventListener('click', navigateToEvents);
+      }
+    }
+
+    // Welcome navigation
+    function initWelcomeNav() {
+      const gotoLoginBtn = document.getElementById('goto-login-btn');
+      const gotoRegisterBtn = document.getElementById('goto-register-btn');
+      const backToWelcomeFromLogin = document.getElementById('back-to-welcome-from-login');
+      const backToWelcomeFromSignup = document.getElementById('back-to-welcome-from-signup');
+
+      gotoLoginBtn.addEventListener('click', navigateToLogin);
+      gotoRegisterBtn.addEventListener('click', navigateToRegister);
+      backToWelcomeFromLogin.addEventListener('click', navigateToWelcome);
+      backToWelcomeFromSignup.addEventListener('click', navigateToWelcome);
+    }
+
+    // Hide splash screen after animation
+    function initSplashScreen() {
+      const splashScreen = document.getElementById('splash-screen');
+      setTimeout(() => {
+        splashScreen.style.display = 'none';
+      }, 3500);
+    }
+
+    // Config
+    async function onConfigChange(config) {
+      const loginTitle = document.getElementById('login-title');
+      const loginSubtitle = document.getElementById('login-subtitle');
+      const heroTitle = document.getElementById('hero-title');
+      const heroSubtitle = document.getElementById('hero-subtitle');
+      const footerText = document.getElementById('footer-text');
+      const dashboardFooterText = document.getElementById('dashboard-footer-text');
+
+      if (loginTitle) loginTitle.textContent = config.login_title || defaultConfig.login_title;
+      if (loginSubtitle) loginSubtitle.textContent = config.login_subtitle || defaultConfig.login_subtitle;
+      if (heroTitle) heroTitle.textContent = config.hero_title || defaultConfig.hero_title;
+      if (heroSubtitle) heroSubtitle.textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+      if (footerText) footerText.textContent = config.footer_text || defaultConfig.footer_text;
+      if (dashboardFooterText) dashboardFooterText.textContent = config.footer_text || defaultConfig.footer_text;
+    }
+
+    // Initialize SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['login_title', config.login_title || defaultConfig.login_title],
+          ['login_subtitle', config.login_subtitle || defaultConfig.login_subtitle],
+          ['hero_title', config.hero_title || defaultConfig.hero_title],
+          ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle],
+          ['footer_text', config.footer_text || defaultConfig.footer_text]
+        ])
+      });
+    }
+
+    // Make sampleEvents globally available
+    window.sampleEvents = sampleEvents;
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeAccounts();
+      initSplashScreen();
+      initPasswordToggle();
+      initSignup();
+      initLogin();
+      initCategoryFilters();
+      initSearch();
+      initLogout();
+      initWelcomeNav();
+      
+      if (!window.elementSdk) {
+        onConfigChange(defaultConfig);
+      }
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cc4822824347efa',t:'MTc3MDgxOTg1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
